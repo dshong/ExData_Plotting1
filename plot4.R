@@ -1,21 +1,13 @@
 source_url <- ("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip")
 zipdata <- tempfile()
 download.file(source_url, zipdata, method = "curl")
-data <- read.table(unz(zipdata, "household_power_consumption.txt"), sep = ";", header = T, colClasses = "character")
+data <- read.table(unz(zipdata, "household_power_consumption.txt"), sep = ";", header = T, colClasses = c("character", "character", rep("numeric", 7)), na.strings = "?")
 
 ##Subset data to include range from 2/1/2007-2/2/2007 and convert date into POSIXlt date/time format
 data01 = subset(data, data$Date == "1/2/2007")
 data02 = subset(data, data$Date == "2/2/2007")
 dataFinal = rbind(data01,data02)
 dataFinal$Date <- strptime(paste(dataFinal$Date, dataFinal$Time), "%d/%m/%Y %H:%M:%S")
-
-##Convert character column into numeric formate for plotting
-dataFinal$Global_active_power = as.numeric(dataFinal$Global_active_power)
-dataFinal$Voltage = as.numeric(dataFinal$Voltage)
-dataFinal$Global_reactive_power = as.numeric(dataFinal$Global_reactive_power)
-dataFinal$Sub_metering_1 = as.numeric(dataFinal$Sub_metering_1)
-dataFinal$Sub_metering_2 = as.numeric(dataFinal$Sub_metering_2)
-dataFinal$Sub_metering_3 = as.numeric(dataFinal$Sub_metering_3)
 
 ##Construct 2x2 template for four plots and save to png format
 png('plot4.png',bg = "transparent", width = 480, height = 480, units = "px")
